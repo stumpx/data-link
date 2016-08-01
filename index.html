@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo</title>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="link.js"></script>
+    <style rel="stylesheet">
+        body {
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+        }
+
+        [data-link], .btn {
+            cursor: pointer;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px;
+            background: #000;
+            border: 1px solid #FFF;
+            outline: none;
+            color: #FFF;
+            font-weight: 400;
+        }
+
+        .view {
+            background: #000;
+            border: 1px solid #FFF;
+            color: #FFF;
+            display: block;
+            padding: 15px;
+        }
+
+        form {
+            display: inline-block;
+            border: 1px solid #FFF;
+            background: #000;
+            color: #FFF;
+            vertical-align: bottom;
+        }
+
+        table {
+            border: none;
+        }
+
+        table input {
+            width: 80px;
+            height: 16px;
+            border: none;
+            outline: none;
+            padding-left: 5px;
+        }
+    </style>
+    <script>
+        function before(e, req) {/*请求前置处理函数*/
+            alert('before req : ' + JSON.stringify(req));
+            console.log('before');
+            console.log(req);
+        }
+        function after(e, res) {/*请求后置处理函数（响应处理函数）*/
+            alert('[functon name]after res : ' + JSON.stringify(res));
+            $($(this).data('link-target')).html(res.data);
+        }
+        $(function () {
+            $('.btn.clear').click(function (e) {
+                $('.view').empty().html('view')
+            });
+            $('#link2').link({
+                /*设置选项值*/
+                data: {a: 11, b: 22},
+                target: '#body2',
+                confirm: 'confirm2?',
+                before: 'before',
+                after: function (e, res) {/*覆盖after函数*/
+                    alert('[functon]after res : ' + JSON.stringify(res));
+                    $($(this).data('link-target')).html(res.data);
+                },
+            });
+        })
+    </script>
+</head>
+<body>
+<h1>data-link demo</h1>
+<div>
+    <form id="frm">
+        <table border="0">
+            <tr>
+                <td> a</td>
+                <td><input type="text" name="a" value="1"/></td>
+            </tr>
+            <tr>
+                <td> b</td>
+                <td><input type="text" name="b" value="2"/></td>
+            </tr>
+        </table>
+    </form>
+    <a class="btn" id="link" data-link="server.json" data-link-confirm="confirm?" data-link-on-before="before" data-link-on-after="after" data-link-target="#body" data-link-data-form="#frm">data-api</a>
+    <a class="btn" id="link2" data-link="server.json" data-link-on-after="after">javascript</a>
+    <a class="btn clear" onclick="">clear view</a>
+</div>
+<div>
+    <div class="view" id="body">view</div>
+    <div class="view" id="body2">view</div>
+</div>
+</body>
+</html>
